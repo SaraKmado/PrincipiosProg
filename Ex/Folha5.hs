@@ -30,3 +30,8 @@ zipWith1 f (x:xs) (y:ys) = f x y : zipWith1 f xs ys
 zipWith2 :: (a->b->c)-> [a] -> [b] -> [c]
 zipWith2 f xs ys = [f (xs !! x) (ys !! y) | x <- [0..length xs - 1],y <- [0..length ys - 1], x == y]
 
+zip' :: [a] -> [b] -> [(a,b)]
+zip' xs ys= zipWith1 f xs ys
+  where f a b = (a,b)
+
+--5
