@@ -10,7 +10,7 @@
 ----a funçao a e igual a b mas a a recebe um tuplo e a b recebe 2 nums
 ----a funçao de c retorna uma funçao soma
 
---3 
+--3
 ---a [2,3,4]
 ---b [True,False,False,False]
 ---c ["As","artes","dos","alunos"]
@@ -85,6 +85,54 @@ aplica3 fs xs = foldl (\acc f -> map f acc) xs fs
 ---i devolve Num
 
 --11
-----(\a b c -> a*b*c)1 2 
+----(\a b c -> a*b*c)1 2
 
 --12
+
+
+--13
+isNonBlank :: Char -> Bool
+isNonBlank = \c -> elem c [' ','\n','\t']
+
+--14
+inv :: (a -> b -> c)-> b -> a -> c
+inv f x y = f y x
+
+--15
+curry' :: ((a, b)-> c)-> a -> b ->c
+curry' f x y = g x y
+  where g x y = f (x,y)
+
+uncurry' :: (a -> b -> c)-> (a, b)-> c
+uncurry' f (x,y) = g (x,y)
+  where g (x,y) = f x y
+
+--16
+---a 30
+---b
+---c
+---d
+---e
+
+--17
+sum' :: Num a => [a] -> a
+sum' xs = foldl (+) 0 xs
+
+length' :: [a] -> Int
+length' xs = foldr (\x acc -> acc+1) 0 xs
+
+--18
+map' :: (a -> b) -> [a] -> [b]
+map' f xs = foldr (\x acc -> f x : acc) [] xs
+
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' f xs = foldr (\x acc -> if f x then x:acc else acc) [] xs
+
+--19
+binary2decimal :: [Int] -> Int
+binary2decimal xs =
+  fst (foldl (\(a1,a2) x -> (a1 + x * 2 ^ a2, a2 - 1)) (0,length xs - 1) xs)
+
+--22
+selectApply :: (a -> b) -> (a -> Bool) -> [a] -> [b]
+selectApply f g xs = [f x | x <- xs, g x]
