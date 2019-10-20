@@ -133,6 +133,29 @@ binary2decimal :: [Int] -> Int
 binary2decimal xs =
   fst (foldl (\(a1,a2) x -> (a1 + x * 2 ^ a2, a2 - 1)) (0,length xs - 1) xs)
 
+--20
+indexOf :: Eq a => [a] -> a -> Int
+indexOf xs z =
+  fst (foldr (\x (a1,a2) -> if x == z then (a2,a2-1) else (a1,a2-1)) (-1,length xs - 1) xs)
+
+--21
+poly :: Int -> [Int] -> Int
+poly z xs =
+  fst (foldr (\x (acc,pos) -> (x * z ^ pos + acc,pos+1)) (0,0) xs)
+
 --22
 selectApply :: (a -> b) -> (a -> Bool) -> [a] -> [b]
 selectApply f g xs = [f x | x <- xs, g x]
+
+--23
+histograma :: Eq a => [a] -> [(a,Int)]
+histograma xs =
+  foldl (\acc x -> if (indexOf' acc x) < 0 then (x,1) : acc else addOne acc (indexOf' acc x)) [] xs
+
+indexOf' :: Eq a => [(a,Int)] -> a -> Int
+indexOf' xs z =
+  fst(foldl (\(acc,pos) x -> if fst x == z then (pos,pos-1) else (acc,pos-1)) (-1,length xs - 1) xs)
+
+addOne :: Eq a => [(a,Int)] -> Int -> [(a,Int)]
+addOne [] _ = []
+addOne ((x1,x2):xs) i = if i == 0 then (x1,x2 + 1) : xs else (x1,x2) : addOne xs (i-1)
