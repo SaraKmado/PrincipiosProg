@@ -163,3 +163,11 @@ addOne ((x1,x2):xs) i = if i == 0 then (x1,x2 + 1) : xs else (x1,x2) : addOne xs
 --24
 gz :: [[Int]] -> [[Bool]]
 gz xs = (map . map) (>0) xs
+
+--25
+iter1 :: (a -> a) -> Int -> (a -> a)
+iter1 f 1 = f
+iter1 f n = f . (iter1 f (n-1))
+
+iter2 :: (a -> a) -> Int -> (a -> a)
+iter2 f n = foldr (\x acc -> f . acc) f [2..n]
