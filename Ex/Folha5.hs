@@ -159,3 +159,7 @@ indexOf' xs z =
 addOne :: Eq a => [(a,Int)] -> Int -> [(a,Int)]
 addOne [] _ = []
 addOne ((x1,x2):xs) i = if i == 0 then (x1,x2 + 1) : xs else (x1,x2) : addOne xs (i-1)
+
+--24
+gz :: [[Int]] -> [[Bool]]
+gz xs = (map . map) (>0) xs
