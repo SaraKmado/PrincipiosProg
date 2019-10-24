@@ -88,7 +88,9 @@ aplica3 fs xs = foldl (\acc f -> map f acc) xs fs
 ----(\a b c -> a*b*c)1 2
 
 --12
-
+---- (++) (\xs ys -> concat [xs,ys])
+---- (++[1,2]) (\xs -> concat [xs,[1,2]])
+---- ([1,2]++) (\xs -> concat [[1,2],xs])
 
 --13
 isNonBlank :: Char -> Bool
