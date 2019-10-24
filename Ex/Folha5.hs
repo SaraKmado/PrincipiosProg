@@ -1,6 +1,6 @@
 --1
 ---a duplica um numero
----bdevolve true se um num for negativo
+---b devolve true se um num for negativo
 ---c devolve o inverso de um numero
 ---d divide um num em 2
 ---e soma 1 a um num
