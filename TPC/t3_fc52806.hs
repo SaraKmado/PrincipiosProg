@@ -19,9 +19,7 @@ minimaDistanciaA x xs = minimum (map (dist x) xs)
 --C
 evitaPontos :: Float -> [(Float,Float)] -> [(Float,Float)] -> [(Float,Float)]
 evitaPontos d [] xs = xs
-
 evitaPontos d _ [] = []
-
 evitaPontos d [x] ys = filter (\y -> (dist x y) > d) ys
 evitaPontos d (x:xs) ys = (exists (evitaPontos d xs ys) (filter (\y -> (dist x y) > d) ys))
 
