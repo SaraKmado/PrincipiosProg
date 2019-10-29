@@ -51,10 +51,9 @@ dropUntil' f (x:xs) = if f x then x:xs else dropUntil' f xs
 
 --8
 total1 :: (Int -> Int)-> Int -> Int
-total1 f x = totalAux1 f x 0
+total1 f 0 = f 0
+total1 f x = f x + total1 f (x-1)
 
-totalAux1 :: (Int -> Int)-> Int -> Int -> Int
-totalAux1 f x n = if x == n then f x else f n + totalAux1 f x (n+1)
 
 total2 :: (Int -> Int)-> Int -> Int
 total2 f x = sum [f y | y <- [0..x]]
