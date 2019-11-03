@@ -4,7 +4,7 @@ Set.null,
 singleton,
 member,
 insert,
---fromList, nao percebi
+fromList,
 Set.filter,
 remove,
 union,
@@ -32,6 +32,10 @@ insert :: Ord a => a -> [a] -> [a]
 insert y xs = if member y xs
   then xs
   else (takeWhile (\x -> y >= x) xs) ++ [y] ++ (dropWhile (\x -> y >= x) xs)
+
+fromList :: Ord a => [a] -> [a]
+fromList [] = empty
+fromList (x:xs) = insert x $ fromList xs
 
 filter :: Ord a => (a -> Bool) -> [a] -> [a]
 filter f xs = [x | x <- xs, f x]
