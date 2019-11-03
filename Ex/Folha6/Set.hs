@@ -1,11 +1,11 @@
 module Set(
 empty,
-null,
+Set.null,
 singleton,
 member,
 insert,
 --fromList, nao percebi
-filter,
+Set.filter,
 remove,
 union,
 intersection,
@@ -14,26 +14,60 @@ size,
 partition
 ) where
 
-empty :: [a]
+empty :: Ord a => [a]
 empty = []
 
-null :: [a] -> Bool
+null :: Ord a => [a] -> Bool
 null [] = True
-null [a] = Falsr
+null [a] = False
 
-singleton :: a -> [a]
+singleton :: Ord a => a -> [a]
 singleton a = [a]
 
-member :: a -> [a] -> Bool
+member :: Ord a => a -> [a] -> Bool
+member y [] = False
 member y xs = foldl (\acc x -> if x == y then True else acc) False xs
 
-insert :: a -> [a] -> [a]
-insert y xs = if y > xs
-  then (takeWhile (\x -> y > x) xs) ++ [y] ++ (dropWhile (\x -> y > x) xs)
-  else (takeWhile (\x -> y <= x) xs) ++ [y] ++ (dropWhile (\x -> y <= x) xs)
+insert :: Ord a => a -> [a] -> [a]
+insert y xs = if member y xs
+  then xs
+  else (takeWhile (\x -> y >= x) xs) ++ [y] ++ (dropWhile (\x -> y >= x) xs)
 
-filter :: (a -> Bool) -> [a] -> [a]
+filter :: Ord a => (a -> Bool) -> [a] -> [a]
 filter f xs = [x | x <- xs, f x]
 
-remove :: a -> [a] -> [a]
-remove x ys = (takeWhile (\y -> y == x) ys) ++ (dropWhile((\y -> y == x) ys))
+remove :: Ord a => a -> [a] -> [a]
+remove x ys = if member x ys
+  then (takeWhile (\y -> y < x) ys) ++ (dropWhile (\y -> y <= x) ys)
+  else ys
+
+union :: Ord a => [a] -> [a] -> [a]
+union [] [] = []
+union [] xs = xs
+union xs [] = xs
+union (x:xs) (y:ys) = if x < y
+  then x : union xs (y:ys)
+  else if (x > y)
+    then y : union (x:xs) ys
+    else x : union xs ys
+
+intersection :: Ord a => [a] -> [a] -> [a]
+intersection _ [] = []
+intersection [] _ = []
+intersection (x:xs) (y:ys)
+  | x == y = x : intersection xs ys
+  | x > y = intersection (x:xs) ys
+  | otherwise = intersection xs (y:ys)
+
+difference :: Ord a => [a] -> [a] -> [a]
+difference [] _ = []
+difference xs [] = xs
+difference xs ys = [x | x <- xs , not $ member x ys]
+
+size :: Ord a => [a] -> Int
+size xs = length xs
+
+partition :: Ord a => (a -> Bool) -> [a] -> ([a],[a])
+partition _ [] = ([],[])
+partition f xs = (ys, difference xs ys)
+  where ys = Set.filter f xs

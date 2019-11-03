@@ -174,10 +174,11 @@ iter2 :: (a -> a) -> Int -> (a -> a)
 iter2 f n = foldr (\x acc -> f . acc) f [2..n]
 
 --26
+----Creates list like [[a], [], [], [b]] and concatenates it
 filter' :: (a -> Bool) -> [a] -> [a]
 filter' p = concat . map box
   where box x = if p x then [x] else []
-  
+
 --27
 sumlen :: [Int] -> (Int,Int)
 sumlen xs = foldr (\x (a1,a2) -> (a1 + x, a2 + 1)) (0,0) xs
