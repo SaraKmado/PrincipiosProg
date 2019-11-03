@@ -1,4 +1,4 @@
-module Map --keys not repeated
+module Map
 (empty
 , singleton
 , insert
