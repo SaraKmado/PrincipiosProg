@@ -47,7 +47,7 @@ unionWith f (M ((m1,m2):ms)) (M ((n1,n2):ns)) = if m1 == n1
   then M $ (m1,f m2 n2) : toList (unionWith f (M ms) (M ns))
   else if m1 > n1
     then M $ (n1,n2) : toList (unionWith f (M ((m1,m2):ms)) (M ns))
-    else M $ (n1,n2) : toList (unionWith f (M ms) (M ((n1,n2):ns)))
+    else M $ (m1,m2) : toList (unionWith f (M ms) (M ((n1,n2):ns)))
 
 fromList :: Ord k => [(k,a)] -> Map k a
 fromList xs = M xs

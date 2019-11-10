@@ -88,7 +88,7 @@ lessThan x y = lessThan (natPred x) (natPred y)
 
 --3
 infixr 5 :-:
-data Set a = Empty |a :-: (Set a)
+data Set a = Empty | a :-: (Set a)
 
 empty :: Ord a => Set a
 empty = Empty
@@ -164,8 +164,67 @@ partition f xs = (ys,difference xs ys)
   where ys = setfilter f xs
 
 --4
+infixr 5 :+
+data Map k a = Emptym | (k,a) :+ (Map k a) deriving (Show)
 
+emptym :: Map k a
+emptym = Emptym
 
+singletonm :: k -> a -> Map k a
+singletonm k a = (k,a) :+ Emptym
+
+insertm :: Ord k => k -> a -> Map k a -> Map k a
+insertm k a (Emptym) = singletonm k a
+insertm k a ((x,y) :+ xs) = if k > x
+  then (x,y) :+ insertm k a xs
+  else if k < x
+    then (k,a) :+ ((x,y) :+ xs)
+    else (k,a) :+ xs
+
+nullm :: Map k a -> Bool
+nullm Emptym = True
+nullm _ = False
+
+sizem :: Map k a -> Int
+sizem Emptym = 0
+sizem (x:+xs) = 1 + sizem xs
+
+memberm :: Ord k => k -> Map k a -> Bool
+memberm k Emptym = False
+memberm k (x:+xs) = if (k < fst x)
+  then False
+  else if k == fst x
+    then True
+    else memberm k xs
+
+lookupm :: Ord k => k -> Map k a -> Maybe a
+lookupm k xs = Prelude.lookup k $ toListm xs
+
+deletem :: Ord k => k -> Map k a -> Map k a
+deletem k Emptym = emptym
+deletem k (x:+xs) = if not (memberm k (x:+xs))
+  then x:+xs
+  else if k == fst x
+    then xs
+    else x :+ (deletem k xs)
+
+unionWith :: Ord k => (a -> a -> a) -> Map k a -> Map k a -> Map k a
+unionWith _ Emptym Emptym = Emptym
+unionWith _ Emptym xs = xs
+unionWith _ xs Emptym = xs
+unionWith f ((x,a):+xs) ((y,b):+ys) = if (x == y)
+  then (x,f a b) :+ unionWith f xs ys
+  else if x > y
+    then (y,b) :+ unionWith f ((x,a) :+ xs) ys
+    else (x,a) :+ unionWith f xs ((y,b) :+ ys)
+
+fromListm :: Ord k => [(k,a)] -> Map k a
+fromListm [] = Emptym
+fromListm (x:xs) = x :+ fromListm xs
+
+toListm :: Map k a -> [(k,a)]
+toListm Emptym = []
+toListm (x:+xs) = x : toListm xs
 
 --5
 data Tree a = EmptyTree | Node (Tree a) a (Tree a)
@@ -269,6 +328,19 @@ instance Visible Bool where
   dimension True = 1
   dimension False = 0
 
-instance (Visible,Visible) where
-  toString (a,b) = "(" + (toString a) + "," + (toString b) + ")"
+instance (Visible a) => Visible [a] where
+  toString [] = ""
+  toString [x] = toString x
+  toString (x:xs) = (toString x) ++ ", " ++ toString xs
+  dimension xs = length xs
+
+instance (Visible a, Visible b) => Visible (a,b) where
+  toString (a,b) = "(" ++ (toString a) ++ "," ++ (toString b) ++")"
+  dimension (a,b) = dimension a + dimension b
+
 --15
+--instance (Ord a,Ord b) => Ord (a,b) where
+--  (a,b) < (c,d) = if a == c then b < d else a < c
+--  (a,b) > (c,d) = if a == c then b > d else a > c
+--  x <= y = not $ x > y
+--  x >= y = not $ x < y
