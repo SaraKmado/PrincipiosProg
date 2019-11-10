@@ -1,3 +1,4 @@
+--1
 data Point = Point (Float,Float) -- (x,y)
 data Shape = Circle Point Float | Rectangle Point Point | Triangle Point Point Point
 -- Cirlce as Center(x,y) radius, Rectangle as (x1,y1) (x2,y2), Triangle as its 3 points
@@ -18,3 +19,5 @@ isRegular (Triangle (Point p1) (Point p2) (Point p3)) =
 
 dist2 :: Point -> Point -> Float
 dist2 (Point (x1,y1)) (Point (x2,y2)) = sqrt $ (x1 - x2)^2 + (y1 - y2)^2
+
+data Nat = Zero | Succ Nat
