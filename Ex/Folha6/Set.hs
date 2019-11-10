@@ -49,11 +49,7 @@ union :: Ord a => [a] -> [a] -> [a]
 union [] [] = []
 union [] xs = xs
 union xs [] = xs
-union (x:xs) (y:ys) = if x < y
-  then x : union xs (y:ys)
-  else if (x > y)
-    then y : union (x:xs) ys
-    else x : union xs ys
+union (x:xs) ys = insert x (union xs ys)
 
 intersection :: Ord a => [a] -> [a] -> [a]
 intersection _ [] = []
