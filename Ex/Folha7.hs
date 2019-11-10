@@ -255,12 +255,20 @@ show'' (x:-:xs) True = (show x) ++ "," ++ show'' xs True
 --13
 
 --14
-----Ver Visible.hs
 class Visible a where
   toString :: a -> String
   dimension :: a -> Int
 
 instance Visible Char where
-  
+  toString a = [a]
+  dimension a = 1
 
+instance Visible Bool where
+  toString True = "True"
+  toString False = "False"
+  dimension True = 1
+  dimension False = 0
+
+instance (Visible,Visible) where
+  toString (a,b) = "(" + (toString a) + "," + (toString b) + ")"
 --15
