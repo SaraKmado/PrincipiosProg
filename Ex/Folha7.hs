@@ -88,7 +88,7 @@ lessThan x y = lessThan (natPred x) (natPred y)
 
 --3
 infixr 5 :-:
-data Set a = Empty | a :-: (Set a) deriving (Show)
+data Set a = Empty |a :-: (Set a)
 
 empty :: Ord a => Set a
 empty = Empty
@@ -168,7 +168,7 @@ partition f xs = (ys,difference xs ys)
 
 
 --5
-data Tree a = EmptyTree | Node (Tree a) a (Tree a) deriving (Show)
+data Tree a = EmptyTree | Node (Tree a) a (Tree a)
 
 emptytree :: Tree a
 emptytree = EmptyTree
@@ -210,3 +210,57 @@ allIn t EmptyTree = False
 allIn t1 t2 = foldl(\acc x -> if elem x ts2 then acc else False) True ts1
   where ts1 = flatten t1
         ts2 = flatten t2
+
+--6
+
+
+--7
+instance (Eq a) => Eq (Tree a) where
+    t1 == t2 = (allIn t1 t2) && (allIn t2 t1)
+
+--8
+instance (Show a) => Show (Tree a) where
+  show t = show' t 0
+
+show' :: (Show a)  => Tree a -> Int -> String
+show' EmptyTree n = (replicate n '|') ++ "Empty" ++ "\n"
+show' (Node l v r) n = (replicate n '|') ++ show v ++ "\n" ++ (show' l (n+1)) ++ (show' r (n+1))
+
+--9
+instance Functor Tree where
+  fmap _ EmptyTree = EmptyTree
+  fmap f (Node l v r) = Node (fmap f l) (f v) (fmap f r)
+
+--10
+instance (Eq a) => Eq (Set a) where
+  Empty == Empty = True
+  Empty == (x:-:xs) = False
+  (x:-:xs) == Empty = False
+  (x:-:xs) == (y:-:ys) = if (x == y) then (xs == ys) else False
+
+instance (Show a) => Show (Set a) where
+  show Empty = "{}"
+  show xs = show'' xs False
+
+show'' :: Show a => Set a -> Bool -> String
+show'' xs False = "{" ++ show'' xs True
+show'' (x:-:Empty) True = (show x) ++ "}"
+show'' (x:-:xs) True = (show x) ++ "," ++ show'' xs True
+
+--11
+----Nao consegui
+
+--12
+
+--13
+
+--14
+----Ver Visible.hs
+class Visible a where
+  toString :: a -> String
+  dimension :: a -> Int
+
+instance Visible Char where
+  
+
+--15
