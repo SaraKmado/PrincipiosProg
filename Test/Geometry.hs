@@ -1,5 +1,7 @@
 module Geometry
-( sphereVolume
+( Teste
+, first
+, sphereVolume
 , sphereArea
 , cubeVolume
 , cubeArea
@@ -7,7 +9,12 @@ module Geometry
 , cuboidVolume
 ) where
 
-sphereVolume :: Float -> Float  
+type Teste = (Float,Float)
+
+first :: Teste -> Float
+first (a,b) = a
+
+sphereVolume :: Float -> Float
 sphereVolume radius = (4.0 / 3.0) * pi * (radius ^ 3)
 
 sphereArea :: Float -> Float
