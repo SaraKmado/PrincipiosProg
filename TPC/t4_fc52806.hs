@@ -27,16 +27,15 @@ add pos point points = (take pos points) ++ [(Tec point)] ++ (drop pos points)
 --D
 
 instance Show Point where
-  show (Tec ponto) = "(Pausa)"
-  show (Inter string ponto) = string
+  show (Tec _) = "(Pausa)"
+  show (Inter string _) = string
 
 instance Show Rota where
-  show rota = (nome rota) ++ " (" ++ (show $ round $ distanciaPercurso $ toPercurso (pontos rota)) ++ "): " ++ (toString (pontos rota) False)
+  show rota = (nome rota) ++ " (" ++ (show $ round $ distanciaPercurso $ toPercurso (pontos rota)) ++ "): " ++ (toString (pontos rota))
 
-toString :: [Point] -> Bool -> String
-toString [] _ = ""
-toString (x:xs) False = show x ++ toString xs True
-toString (x:xs) True = " --- " ++ show x ++ toString xs True
+toString :: [Point] -> String
+toString []  = ""
+toString (x:xs) = show x ++ foldl (\acc y -> acc ++ " --- " ++ (show y)) "" xs
 
 
 toPercurso :: [Point] -> Percurso
