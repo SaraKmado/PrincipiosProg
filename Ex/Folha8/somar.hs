@@ -1,9 +1,13 @@
 main = do
   putStr "Quantos numeros? "
-  n <- read $ getLine
+  ns <- getLine
+  let n = read ns
   let nums = readnums n
-  print ("A soma e " ++ sum nums)
+  print ("A soma e " ++ (show $ sum nums))
 
 readnums :: Int -> [Int]
 readnums 0 = []
-readnums x = (read (getLine)) : readnums (x-1)
+readnums x = do
+  ns <- getLine
+  let n = read ns
+  n : readnums (x-1)
