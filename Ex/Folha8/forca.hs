@@ -6,10 +6,13 @@ main = do
   hSetEcho stdin False
   word <- getLine
   hSetEcho stdin True
-  let currWord = replicate (length word) '-'
-  print currWord
-  print "Segundo Jogador, tente adivinhar:"
-  jogo 1 word currWord
+  if length word == 0
+    then print "Bela piada. Se nao queres jogar entao nao jogues fds"
+    else do
+      let currWord = replicate (length word) '-'
+      print currWord
+      print "Segundo Jogador, tente adivinhar:"
+      jogo 1 word currWord
 
 jogo :: Int -> String -> String -> IO()
 jogo n word curr = if (n-1) == 6
