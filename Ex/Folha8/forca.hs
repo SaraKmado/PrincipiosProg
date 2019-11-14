@@ -1,5 +1,6 @@
 import System.IO
 import Data.Maybe
+
 main = do
   print "Primeiro Jogador, pense numa palavra:"
   hSetEcho stdin False
