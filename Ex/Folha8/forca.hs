@@ -11,7 +11,7 @@ main = do
   jogo 1 word currWord
 
 jogo :: Int -> String -> String -> IO()
-jogo n word curr = if n == 6
+jogo n word curr = if (n-1) == 6
   then print $ "Maximo de tentativas atingido. A palavra era " ++ word
   else
     do
