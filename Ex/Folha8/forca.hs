@@ -23,16 +23,24 @@ jogo n word curr = if (n-1) == 6
     do
       print ("Tentativa " ++ (show n))
       cs <- getLine
-      let c = first cs
-      let result = fromMaybe "" (jogar word curr c)
-      if result == ""
-        then do
-          print word
-          print "Acertou!"
-          else do
-            print result
-            jogo (n+1) word result
+      if length cs > 1
+        then
+          if word == cs
+            then print "Acertou!"
+            else do
+              print "Errou..."
+              jogo (n+1) word curr
 
+      else do
+        let c = first cs
+        let result = fromMaybe "" (jogar word curr c)
+        if result == ""
+          then do
+            print word
+            print "Acertou!"
+            else do
+              print result
+              jogo (n+1) word result
 
 jogar :: String -> String -> Char -> Maybe String
 jogar word curr char = if result == word
