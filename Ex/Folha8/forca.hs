@@ -18,14 +18,14 @@ main = do
         let currWord = replicate (length word) '-'
         print currWord
         print "Segundo Jogador, tente adivinhar:"
-        jogo 1 word currWord
+        jogo 1 0 word currWord ""
 
-jogo :: Int -> String -> String -> IO()
-jogo n word curr = if (n-1) == maxAttempts
-  then print $ "Maximo de tentativas atingido. A palavra era " ++ word
+jogo :: Int -> Int -> String -> String -> String -> IO()
+jogo n errors word curr used = if (errors+1) == maxAttempts
+  then print $ "Maximo de erros atingido. A palavra era " ++ word
   else
     do
-      print ("Tentativa " ++ (show n))
+      print ("Tentativa " ++ (show n) ++", erros "++ (show errors) ++ "/" ++(show maxAttempts) ++ ", letras usadas: " ++ used)
       cs <- getLine
       if length cs > 1
         then
@@ -45,10 +45,8 @@ jogo n word curr = if (n-1) == maxAttempts
             else do
               print result
               if elem c word
-                then jogo (n) word result
-
-
-                else jogo (n+1) word result
+                then jogo (n+1) errors word result (used)
+                else jogo (n+1) (errors+1) word result (used ++ [c])
 
 jogar :: String -> String -> Char -> Maybe String
 jogar word curr char = if result == word
