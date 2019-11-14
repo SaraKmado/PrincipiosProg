@@ -1,4 +1,5 @@
 import Control.Monad
+import System.IO
 --1
 writePrimes :: [Int] -> IO()
 writePrimes xs = do
@@ -58,18 +59,24 @@ showParity2 xs = mapM_ printEven xs
 --5
 guess :: Int -> IO()
 guess maxi = do
-  let med = div maxi 2
-  let num = binSearch med 0
-  print ("Sucesso apos " ++ (show num) ++ " tentativas")
+  binSearch 0 maxi 1
 
---binSearch :: Int -> Int -> Int
-binSearch n count = do
-  print ((show n) ++ "? ")
-  char <- getChar
-  if char == '>'
-    then return $ binSearch (3 * n / 2) (n+1)
-    else if char == '<'
-      then return $  binSearch (n/2) (n+1)
-      else if char == '='
-        then return n
-        else error "Char nao suportado"
+binSearch :: Int -> Int -> Int -> IO()
+binSearch low up count = do
+  let n = div (low + up) 2
+  putStrLn ((show n) ++ "? ")
+  line <- getLine
+  let char = first line
+  case char of
+    '<' -> do
+      binSearch low n (count +1)
+    '>' -> do
+      binSearch n up (count + 1)
+    '=' -> print ("Sucesso apos " ++ (show count) ++ " tentativas")
+    _ -> print ("Fode-te")
+
+first :: String -> Char
+first (x:xs) = x
+
+--6
+----Ver forca.hs
