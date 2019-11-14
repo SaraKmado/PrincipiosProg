@@ -54,3 +54,22 @@ showParity2 xs = mapM_ printEven xs
 --4
 ----ler um numero n. depois ler n inteiros e soma los
 ----ver somar.hs
+
+--5
+guess :: Int -> IO()
+guess maxi = do
+  let med = div maxi 2
+  let num = binSearch med 0
+  print ("Sucesso apos " ++ (show num) ++ " tentativas")
+
+--binSearch :: Int -> Int -> Int
+binSearch n count = do
+  print ((show n) ++ "? ")
+  char <- getChar
+  if char == '>'
+    then return $ binSearch (3 * n / 2) (n+1)
+    else if char == '<'
+      then return $  binSearch (n/2) (n+1)
+      else if char == '='
+        then return n
+        else error "Char nao suportado"

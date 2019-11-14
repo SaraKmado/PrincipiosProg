@@ -6,4 +6,4 @@ module Rota
 )where
 
 criaRota = route.criaRota
-adicionaTecnica = rout.adicionaTecnica
+adicionaTecnica = route.adicionaTecnica
