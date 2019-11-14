@@ -6,13 +6,15 @@ main = do
   hSetEcho stdin False
   word <- getLine
   hSetEcho stdin True
-  if length word == 0
-    then print "Bela piada. Se nao queres jogar entao nao jogues fds"
-    else do
-      let currWord = replicate (length word) '-'
-      print currWord
-      print "Segundo Jogador, tente adivinhar:"
-      jogo 1 word currWord
+  case (length word) of
+      0 -> print "Bela piada. Se nao queres jogar entao nao jogues fds"
+      1 -> print "Queres mesmo ser fodido! Proxima vez tenta uma palavra maior"
+      2 -> print "Queres mesmo ser fodido! Proxima vez tenta uma palavra maior"
+      otherwise ->  do
+        let currWord = replicate (length word) '-'
+        print currWord
+        print "Segundo Jogador, tente adivinhar:"
+        jogo 1 word currWord
 
 jogo :: Int -> String -> String -> IO()
 jogo n word curr = if (n-1) == 6
@@ -45,6 +47,6 @@ complete (x:xs) (y:ys) c = if c == x
   else y:complete xs ys c
 
 first :: String -> Char
-first [] = error "No"
+first [] = error "Mais que uma letra seu estupido"
 first [x] = x
-first (x:xs) = error "No"
+first (x:xs) = error "So uma letra seu estupido"
