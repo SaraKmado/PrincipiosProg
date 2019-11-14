@@ -33,8 +33,7 @@ jogo n word curr = if (n-1) == maxAttempts
             then print "Acertou!"
             else do
               print "Errou..."
-              print curr
-              jogo (n+1) word curr
+              print $ "A palavra era " ++ word
 
       else do
         let c = first cs
@@ -45,7 +44,11 @@ jogo n word curr = if (n-1) == maxAttempts
             print "Acertou!"
             else do
               print result
-              jogo (n+1) word result
+              if elem c word
+                then jogo (n) word result
+
+
+                else jogo (n+1) word result
 
 jogar :: String -> String -> Char -> Maybe String
 jogar word curr char = if result == word
