@@ -1,6 +1,10 @@
 import System.IO
 import Data.Maybe
 
+maxAttempts = 6 --variavel globar. nice
+--isto acabou por ter mais que o que o exercicio pedia. oh well
+--permite adivinhar letras ou a palavra toda
+
 main = do
   print "Primeiro Jogador, pense numa palavra:"
   hSetEcho stdin False
@@ -17,7 +21,7 @@ main = do
         jogo 1 word currWord
 
 jogo :: Int -> String -> String -> IO()
-jogo n word curr = if (n-1) == 6
+jogo n word curr = if (n-1) == maxAttempts
   then print $ "Maximo de tentativas atingido. A palavra era " ++ word
   else
     do
@@ -29,6 +33,7 @@ jogo n word curr = if (n-1) == 6
             then print "Acertou!"
             else do
               print "Errou..."
+              print curr
               jogo (n+1) word curr
 
       else do
