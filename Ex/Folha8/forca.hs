@@ -21,7 +21,7 @@ main = do
         jogo 1 0 word currWord ""
 
 jogo :: Int -> Int -> String -> String -> String -> IO()
-jogo n errors word curr used = if (errors+1) == maxAttempts
+jogo n errors word curr used = if (errors-1) == maxAttempts
   then print $ "Maximo de erros atingido. A palavra era " ++ word
   else
     do
