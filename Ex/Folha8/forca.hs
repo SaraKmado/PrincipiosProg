@@ -6,13 +6,14 @@ maxAttempts = 6 --variavel globar. nice
 --permite adivinhar letras ou a palavra toda
 
 main = do
+  print "Jogo da forca da Snoopy. "
   print "Primeiro Jogador, pense numa palavra:"
   hSetEcho stdin False
   word <- getLine
   hSetEcho stdin True
   case (length word) of
       0 -> print "Bela piada. Se nao queres jogar entao nao jogues fds"
-      1 -> print "Queres mesmo ser fodido! Proxima vez tenta uma palavra maior"
+      1 -> print "Isso nao e uma palavra seu espertinho"
       2 -> print "Queres mesmo ser fodido! Proxima vez tenta uma palavra maior"
       otherwise ->  do
         let currWord = replicate (length word) '-'
@@ -42,11 +43,15 @@ jogo n errors word curr used = if (errors-1) == maxAttempts
           then do
             print word
             print "Acertou!"
-            else do
-              print result
-              if elem c word
-                then jogo (n+1) errors word result (used)
-                else jogo (n+1) (errors+1) word result (used ++ [c])
+            else if c == '~'
+              then do
+                print "Pelo menos uma letra seu estupido. So por isso tens mais uma errada"
+                jogo (n+1) (errors+1) word result (used)
+              else do
+                print result
+                if elem c word
+                  then jogo (n+1) errors word result (used)
+                  else jogo (n+1) (errors+1) word result (used ++ [c])
 
 jogar :: String -> String -> Char -> Maybe String
 jogar word curr char = if result == word
@@ -61,6 +66,5 @@ complete (x:xs) (y:ys) c = if c == x
   else y:complete xs ys c
 
 first :: String -> Char
-first [] = error "Mais que uma letra seu estupido"
+first [] = '~'
 first [x] = x
-first (x:xs) = error "So uma letra seu estupido"
