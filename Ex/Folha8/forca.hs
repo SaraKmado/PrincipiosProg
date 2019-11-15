@@ -1,7 +1,7 @@
 import System.IO
 import Data.Maybe
 
-maxAttempts = 6 --variavel globar. nice
+maxAttempts = 6 --variavel global. nice. Determina o maximo de tentativas que se pode ter
 --isto acabou por ter mais que o que o exercicio pedia. oh well
 --permite adivinhar letras ou a palavra toda
 
