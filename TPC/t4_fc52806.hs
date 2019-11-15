@@ -1,6 +1,10 @@
 --Sara Queimado 52806
+module Rotas
+( Rota
+, criaRota
+, adicionaTecnica
+) where
 import Geometria
-
 --A
 data Point = Tec Ponto | Inter String Ponto
 data Rota = Rota {nome :: String, pontos :: [Point]}
@@ -16,7 +20,6 @@ criaRota' [] _ = []
 criaRota' _ [] = []
 criaRota' (x:xs) (y:ys) = (Inter x y) : criaRota' xs ys
 
-
 --C
 adicionaTecnica :: Int -> Ponto -> Rota -> Rota
 adicionaTecnica pos point rota = Rota (nome rota) (add pos point (pontos rota))
@@ -25,7 +28,6 @@ add :: Int -> Ponto -> [Point] -> [Point]
 add pos point points = (take pos points) ++ [(Tec point)] ++ (drop pos points)
 
 --D
-
 instance Show Point where
   show (Tec _) = "(Pausa)"
   show (Inter string _) = string
@@ -36,7 +38,6 @@ instance Show Rota where
 toString :: [Point] -> String
 toString []  = ""
 toString (x:xs) = show x ++ foldl (\acc y -> acc ++ " --- " ++ (show y)) "" xs
-
 
 toPercurso :: [Point] -> Percurso
 toPercurso [] = []
