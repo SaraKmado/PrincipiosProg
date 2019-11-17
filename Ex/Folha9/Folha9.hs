@@ -1,4 +1,6 @@
 import System.IO
+import System.Random
+import Data.List
 
 --1
 toFile :: Show a => FilePath -> [a] -> IO()
@@ -68,3 +70,46 @@ isPrefix (x:xs) (y:ys) = x == y && isPrefix xs ys
 
 --7
 ----ver menu.hs
+
+--8
+rand :: Int -> Int
+rand n = fst $ randomR (0,n-1) (mkStdGen 54)
+----nao pois recebe sempre o mesmo num para criar o random generator, pelo que cria sempre o mesmo number generator
+
+--9
+type Carta = Int
+type Mao = [Carta]
+
+---a
+mao1 :: Int -> Mao
+mao1 n = take n (randomRs (1,52) (mkStdGen 65))
+
+---b
+mao2 :: Int -> IO Mao
+mao2 n = do
+  g <- getStdGen
+  return $ take n (randomRs (1,52) (g))
+
+--10
+permutar :: Ord a => [a] -> [a]
+permutar xs = do
+  g <- getStdGen
+  let ys = makeRandomList (length xs) g
+  orderBy xs ys
+
+orderBy :: Ord a => [a] -> [Int] -> [a]
+orderBy [] [] = []
+orderBy xs ys = x : (orderBy (delete x xs) (delete y ys))
+ where y = maximum ys
+       p = pos ys y 0
+       x = xs !! p
+
+pos :: [Int] -> Int -> Int -> Int
+pos [] _ _ = error "No"
+pos (x:xs) n p = if x == n then p else pos xs n (p+1)
+
+makeRandomList :: Int -> StdGen -> [Int]
+makeRandomList 0 _ = []
+makeRandomList n g = do
+  (fst m) : makeRandomlist (n-1) (snd m)
+  where m = randomR (1,n^3) g

@@ -13,8 +13,8 @@ main = do
 readAll :: FilePath -> IO()
 readAll name = do
   myLines <- readFile name
-  let yooo = myLines
-  print ((show $ length $ lines yooo) ++ "  " ++ (show $ countWords yooo) ++ "  " ++ (show $ (countChars yooo)))
+  let myLines2 = myLines
+  print ((show $ length $ lines myLines2) ++ "  " ++ (show $ countWords myLines2) ++ "  " ++ (show $ (countChars myLines2)))
 
 countChars :: String -> Int
 countChars string = foldl (\acc x -> if (x == '\n' || x == '\"') then acc else acc + 1) 0 string
