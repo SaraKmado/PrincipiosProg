@@ -7,16 +7,20 @@ main = do
     then print "Only one argument"
     else do
       let [name] = args
-      readAll 0 0 0 name
+      handle <- openFile name ReadMode
+      readAll 0 0 0 nadle
 
-readAll :: Int -> Int -> Int -> String -> IO()
+readAll :: Int -> Int -> Int -> Handle -> IO()
 readAll l w c name = do
-  readLines <- readFile name
-  if readLines == ""
-    then
-        print (show l ++ "          " ++ show w ++ "          " ++ show c)
+  myLines <- readFile name
+  if length myLines == 0
+    then print (show l ++ "  " ++ show w ++ "  " ++ show c)
     else do
-        let nLines = length $ lines readLines
-            nWords = foldl (\acc x -> acc + (if x == ' ' then 1 else 0)) 0 (readLines)
-            nChars = foldl (\acc x -> acc + 1) 0 (readLines)
-        readAll (nLines + l) (nWords + w) (nChars + c) name
+      print (show l ++ "  " ++ show w ++ "  " ++ show c)
+      let ch = length myLines
+      let wo = length $ lines myLines
+      let li = 1
+      readAll (l + li) (w + wo) (c + ch) name
+
+getNumWords :: String -> Int
+getNumWords string = foldl (\acc x -> if x == ' ' then acc + 1 else acc) 0 string

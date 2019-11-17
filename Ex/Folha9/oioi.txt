@@ -1,3 +1,4 @@
 "Ola"
 "Oi"
 "Boas"
+"sup"
