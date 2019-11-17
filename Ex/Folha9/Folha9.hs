@@ -62,3 +62,9 @@ isPrefix (x:xs) (y:ys) = x == y && isPrefix xs ys
 
 ---c
 ----ver Filter.hs
+
+--6
+----ver wc.hs
+
+--7
+----ver menu.hs

@@ -1,5 +1,6 @@
 import System.Environment
 import System.IO
+import Data.List
 
 main = do
   args <- getArgs
@@ -7,20 +8,16 @@ main = do
     then print "Only one argument"
     else do
       let [name] = args
-      handle <- openFile name ReadMode
-      readAll 0 0 0 nadle
+      readAll name
 
-readAll :: Int -> Int -> Int -> Handle -> IO()
-readAll l w c name = do
+readAll :: FilePath -> IO()
+readAll name = do
   myLines <- readFile name
-  if length myLines == 0
-    then print (show l ++ "  " ++ show w ++ "  " ++ show c)
-    else do
-      print (show l ++ "  " ++ show w ++ "  " ++ show c)
-      let ch = length myLines
-      let wo = length $ lines myLines
-      let li = 1
-      readAll (l + li) (w + wo) (c + ch) name
+  let yooo = myLines
+  print ((show $ length $ lines yooo) ++ "  " ++ (show $ countWords yooo) ++ "  " ++ (show $ (countChars yooo)))
 
-getNumWords :: String -> Int
-getNumWords string = foldl (\acc x -> if x == ' ' then acc + 1 else acc) 0 string
+countChars :: String -> Int
+countChars string = foldl (\acc x -> if (x == '\n' || x == '\"') then acc else acc + 1) 0 string
+
+countWords :: String -> Int
+countWords string = length $ words string
