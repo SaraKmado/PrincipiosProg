@@ -93,9 +93,10 @@ mao2 n = do
 --10
 permutar :: Ord a => [a] -> [a]
 permutar xs = do
-  g <- getStdGen
-  let ys = makeRandomList (length xs) g
-  orderBy xs ys
+   g <- getStdGen
+   let p = snd $ randomR (1,length xs) g
+       ys = makeRandomList (length xs) p
+   return $ orderBy xs ys
 
 orderBy :: Ord a => [a] -> [Int] -> [a]
 orderBy [] [] = []
@@ -111,5 +112,5 @@ pos (x:xs) n p = if x == n then p else pos xs n (p+1)
 makeRandomList :: Int -> StdGen -> [Int]
 makeRandomList 0 _ = []
 makeRandomList n g = do
-  (fst m) : makeRandomlist (n-1) (snd m)
+  (fst m) : makeRandomList (n-1) (snd m)
   where m = randomR (1,n^3) g
