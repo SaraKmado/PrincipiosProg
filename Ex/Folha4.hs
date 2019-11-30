@@ -1,3 +1,28 @@
+--module for folha10
+module Folha4 (
+  sum',
+  replicate',
+  maximo,
+  elem',
+  substitui,
+  altera,
+  multiplos,
+  zip',
+  potencias,
+  posicoes,
+  frase,
+  trocaPares,
+  fusao,
+  repBinaria,
+  odioso,
+  basex,
+  insert,
+  insertSort,
+  merge,
+  mergeSort,
+  quickSort
+) where
+
 --1
 ---a
 sum' :: Num a => [a] -> a
