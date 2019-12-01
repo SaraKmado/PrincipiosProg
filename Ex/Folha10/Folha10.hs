@@ -1,7 +1,9 @@
 import Test.QuickCheck
-import Data.List
+import Data.List as List
 import Folha4 as F
 import Data.Maybe
+import Set
+import Tree
 
 --1
 ---a
@@ -261,4 +263,242 @@ fusaoTest xs ys = (testOrder ordsO ordsT)
         numsT = snd $ unzip zs
 
 testOrder :: Ord a => [a] -> [a] -> Bool
-testOrder xs ys = (Data.List.sort xs) == ys
+testOrder xs ys = (List.sort xs) == ys
+
+--4
+data Point = Point (Float,Float) deriving Show-- (x,y)
+data Shape = Circle Point Float | Rectangle Point Point | Triangle Point Point Point deriving Show
+-- Cirlce as Center(x,y) radius, Rectangle as (x1,y1) (x2,y2), Triangle as its 3 points
+
+perimeter :: Shape -> Float
+perimeter (Circle _ radius) = 2 * radius * pi
+perimeter (Rectangle (Point (x1,y1)) (Point (x2,y2))) = 2 * abs(x2-x1) + 2 * abs(y2-y1)
+perimeter (Triangle (Point (x1,y1)) (Point (x2,y2)) (Point (x3,y3))) = dist (x1,y1) (x2,y2) + dist (x2,y2) (x3,y3) + dist (x1,y1) (x3,y3)
+
+dist :: (Float,Float) -> (Float,Float) -> Float
+dist (x1,y1) (x2,y2) = sqrt $ (x1 - x2)^2 + (y1 - y2)^2
+
+isRegular :: Shape -> Bool
+isRegular (Circle _ _) = True
+isRegular (Rectangle (Point (x1,y1)) (Point (x2,y2))) = x1 - x2 == y1 - y2
+isRegular (Triangle (Point p1) (Point p2) (Point p3)) =
+  dist2 (Point p1) (Point p2) == dist2 (Point p2) (Point p3) && dist2 (Point p1) (Point p3) == dist2 (Point p1) (Point p2)
+
+dist2 :: Point -> Point -> Float
+dist2 (Point (x1,y1)) (Point (x2,y2)) = sqrt $ (x1 - x2)^2 + (y1 - y2)^2
+
+---a
+instance Arbitrary Point where
+  arbitrary = do
+    x <- arbitrary
+    y <- arbitrary
+    return $ Point (x,y)
+
+instance Arbitrary Shape where
+  arbitrary = do
+    n <- choose (1,3) :: Gen Int
+    case n of
+      1 -> do
+        x <- arbitrary
+        y <- arbitrary
+        return $ Circle x y
+      2 -> do
+        x <- arbitrary
+        y <- arbitrary
+        return $ Rectangle x y
+      3 -> do
+        x <- arbitrary
+        y <- arbitrary
+        z <- arbitrary
+        return $ Triangle x y z
+
+---b
+prop_non_neg_perim :: Shape -> Property
+prop_non_neg_perim x = positiveRadius x ==> perimeter x >= 0
+
+positiveRadius :: Shape -> Bool
+positiveRadius (Circle _ x) = x > 0
+positiveRadius _ = True
+
+quickNonNeg = quickCheck prop_non_neg_perim
+
+---c
+
+
+--5
+---a
+data Set a = S [a]
+
+instance (Arbitrary a) => Arbitrary (Set a) where
+  arbitrary = do
+    s <- arbitrary
+    return $ S s
+
+---b
+---- empty, construtora
+---- Set.null, observadora
+---- singleton, derivada
+---- member, observadora
+---- insert, construtora
+---- fromList, construtora
+---- Set.filter, construtora
+---- remove, construtora
+---- union, derivada
+---- intersection, derivada
+---- difference, construtora
+---- size, observadora
+---- partition, construtora
+
+---c
+prop_null_empty :: Bool
+prop_null_empty = Set.null empty
+
+prop_null_insert :: Int -> [Int] -> Property
+prop_null_insert x xs = ordered xs ==> not $ Set.null $ Set.insert x xs
+
+prop_null_fromList :: String -> Bool
+prop_null_fromList xs = List.null xs == (Set.null $ fromList xs)
+
+instance Show (a -> b) where
+  show x = "Func"
+
+prop_null_filter :: (Int -> Bool) -> [Int] -> Bool
+prop_null_filter f xs = if Set.null xs then Set.null $ Set.filter f xs else True
+
+prop_null_remove :: Int -> [Int] -> Property
+prop_null_remove x xs = ordered xs ==> if Set.null xs then Set.null $ remove x xs else True
+
+prop_null_difference :: [Int] -> [Int] -> Property
+prop_null_difference xs ys = (ordered xs && ordered ys) ==> if Set.null xs
+  then Set.null $ difference xs ys
+  else if Set.null ys
+    then xs == (difference xs ys)
+    else True
+
+prop_member_empty :: Int -> Bool
+prop_member_empty x = not $ member x empty
+
+prop_member_insert :: Int -> [Int] -> Property
+prop_member_insert x xs = (ordered xs) ==> member x (Set.insert x xs)
+
+prop_member_fromList :: Int -> [Int] -> Bool
+prop_member_fromList x xs = elem x xs == member x (fromList xs)
+
+prop_member_filter :: Int -> [Int] -> (Int -> Bool) -> Bool
+prop_member_filter x xs f = (f x && member x xs) == (member x $ Set.filter f xs)
+
+prop_member_remove :: Int -> [Int] -> Property
+prop_member_remove x xs = (ordered xs) ==> not $ member x $ remove x xs
+
+prop_member_difference :: Int -> [Int] -> [Int] -> Property
+prop_member_difference x xs ys = (ordered ys && ordered xs) ==> if (member x xs && member x ys)
+  then not $ member x $ difference xs ys
+  else if member x xs
+    then member x $ difference xs ys
+    else not $ member x $ difference xs ys
+
+prop_size_empty :: Bool
+prop_size_empty = (Set.size empty) == 0
+
+prop_size_insert :: Int -> [Int] -> Property
+prop_size_insert x xs = (ordered xs) ==> if member x xs then (size xs) == (size $ Set.insert x xs) else (size xs + 1) == (size $ Set.insert x xs)
+
+prop_size_fromList :: [Int] -> Bool
+prop_size_fromList xs = (length xs) >= (size $ fromList xs)
+
+prop_size_filter :: Int -> [Int] -> (Int -> Bool) -> Bool
+prop_size_filter x xs f = size xs >= (size $ Set.filter f xs)
+
+prop_size_remove :: Int -> [Int] -> Property
+prop_size_remove x xs = (ordered xs) ==> if member x xs then size xs - 1 == (size $ remove x xs) else size xs == (size $ remove x xs)
+
+prop_size_difference :: [Int] -> [Int] -> Property
+prop_size_difference xs ys = (ordered xs && ordered ys) ==>
+  (size $ difference xs ys) <= (size xs)
+
+---d
+prop_singleton :: Int -> Bool
+prop_singleton x = singleton x == ((Set.insert x empty)) && (Set.null $ remove x $ singleton x)
+
+prop_intersection :: [Int] -> [Int] -> Property
+prop_intersection xs ys = (ordered xs && ordered ys) ==>
+  (intersection xs ys) == (Set.filter (member' (Set.filter (member' xs) ys)) xs)
+    where member' ls l = member l ls
+
+prop_difference :: [Int] -> [Int] -> Property
+prop_difference xs ys = (ordered xs && ordered ys) ==>
+  (difference xs ys) == (Set.filter (notMember $ intersection xs ys) xs)
+  where notMember ls l = not $ member l ls
+
+prop_union :: [Int] -> [Int] -> Property
+prop_union xs ys = (ordered xs && ordered ys) ==>
+  (Set.union xs ys) == (fromList (xs ++ ys))
+
+---e
+----Criamos um set de 2 elementos
+prop_empty_insert :: Int -> Bool
+prop_empty_insert x = singleton x == Set.insert x empty
+
+prop_insert_remove :: Int -> [Int] -> Property
+prop_insert_remove x xs = ordered xs ==>
+  if member x xs
+    then (remove x $ Set.insert x xs) == (remove x xs)
+    else (remove x $ Set.insert x xs) == xs
+
+
+ordered xs = and $ zipWith (<) xs (tail xs)
+
+testAll = do
+  print "prop_null_empty"
+  quickCheck prop_null_empty
+  print "prop_null_insert"
+  quickCheck prop_null_insert
+  print "prop_null_fromList"
+  quickCheck prop_null_fromList
+  print "prop_null_filter"
+  quickCheck prop_null_filter
+  print "prop_null_remove"
+  quickCheck prop_null_remove
+  print "prop_null_difference"
+  quickCheck prop_null_difference
+  print "prop_member_empty"
+  quickCheck prop_member_empty
+  print "prop_member_insert"
+  quickCheck prop_member_insert
+  print "prop_member_fromList"
+  quickCheck prop_member_fromList
+  print "prop_member_filter"
+  quickCheck prop_member_filter
+  print "prop_member_remove"
+  quickCheck prop_member_remove
+  print "prop_member_difference"
+  quickCheck prop_member_difference
+  print "prop_size_empty"
+  quickCheck prop_size_empty
+  print "prop_size_insert"
+  quickCheck prop_size_insert
+  print "prop_size_fromList"
+  quickCheck prop_size_fromList
+  print "prop_size_filter"
+  quickCheck prop_size_filter
+  print "prop_size_remove"
+  quickCheck prop_size_remove
+  print "prop_size_difference"
+  quickCheck prop_size_difference
+  print "prop_singleton"
+  quickCheck prop_singleton
+  print "prop_intersection"
+  quickCheck prop_intersection
+  print "prop_difference"
+  quickCheck prop_difference
+  print "prop_union"
+  quickCheck prop_union
+  print "prop_empty_insert"
+  quickCheck prop_empty_insert
+  print "prop_insert_remove"
+  quickCheck prop_insert_remove
+
+--6
+---a ver Tree.hs
+
+---b
