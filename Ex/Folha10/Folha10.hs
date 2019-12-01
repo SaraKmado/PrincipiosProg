@@ -266,8 +266,8 @@ testOrder :: Ord a => [a] -> [a] -> Bool
 testOrder xs ys = (List.sort xs) == ys
 
 --4
-data Point = Point (Float,Float) deriving Show-- (x,y)
-data Shape = Circle Point Float | Rectangle Point Point | Triangle Point Point Point deriving Show
+data Point = Point (Float,Float) deriving (Show,Eq)-- (x,y)
+data Shape = Circle Point Float | Rectangle Point Point | Triangle Point Point Point deriving (Show,Eq)
 -- Cirlce as Center(x,y) radius, Rectangle as (x1,y1) (x2,y2), Triangle as its 3 points
 
 perimeter :: Shape -> Float
@@ -294,23 +294,24 @@ instance Arbitrary Point where
     y <- arbitrary
     return $ Point (x,y)
 
-instance Arbitrary Shape where
-  arbitrary = do
-    n <- choose (1,3) :: Gen Int
-    case n of
-      1 -> do
-        x <- arbitrary
-        y <- arbitrary
-        return $ Circle x y
-      2 -> do
-        x <- arbitrary
-        y <- arbitrary
-        return $ Rectangle x y
-      3 -> do
-        x <- arbitrary
-        y <- arbitrary
-        z <- arbitrary
-        return $ Triangle x y z
+-- instance Arbitrary Shape where
+--   arbitrary = do
+--     n <- choose (1,3) :: Gen Int
+--     case n of
+--       1 -> do
+--         x <- arbitrary
+--         y <- arbitrary
+--         return $ Circle x y
+--       2 -> do
+--         x <- arbitrary
+--         y <- arbitrary
+--         return $ Rectangle x y
+--       3 -> do
+--         x <- arbitrary
+--         y <- arbitrary
+--         z <- arbitrary
+--         return $ Triangle x y z
+
 
 ---b
 prop_non_neg_perim :: Shape -> Property
@@ -323,7 +324,46 @@ positiveRadius _ = True
 quickNonNeg = quickCheck prop_non_neg_perim
 
 ---c
+newProp :: Shape -> Property
+newProp x = positiveRadius x ==>
+  classify (isCircle x) "Circle" $
+  classify (isTriangle x) "Triangle" $
+  classify (isRectangle x) "Rectangle" $
+  perimeter x >= 0
 
+quickNew = quickCheck newProp
+
+isCircle :: Shape -> Bool
+isCircle (Circle _ _) = True
+isCircle _ = False
+
+isTriangle :: Shape -> Bool
+isTriangle (Triangle _ _ _) = True
+isTriangle _ = False
+
+isRectangle :: Shape -> Bool
+isRectangle (Rectangle _ _) = True
+isRectangle _ = False
+
+instance Arbitrary Shape where
+  arbitrary = do
+    frequency [(4, circ),(2, rect),(1, tri)]
+
+circ = do
+  x <- arbitrary
+  y <- arbitrary
+  return $ Circle x y
+
+rect = do
+  x <- arbitrary
+  y <- arbitrary
+  return $ Rectangle x y
+
+tri = do
+  x <- arbitrary
+  y <- arbitrary
+  z <- arbitrary
+  return $ Triangle x y z
 
 --5
 ---a
@@ -499,6 +539,4 @@ testAll = do
   quickCheck prop_insert_remove
 
 --6
----a ver Tree.hs
-
----b
+----See Tree.hs

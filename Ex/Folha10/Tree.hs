@@ -1,3 +1,16 @@
+module Tree
+(Tree,
+emptytree,
+treesize,
+depth,
+flatten,
+perfect,
+invert,
+makeTree,
+isIn,
+allIn
+) where
+
 import Test.QuickCheck
 
 data Tree a = EmptyTree | Node (Tree a) a (Tree a)
@@ -57,13 +70,63 @@ instance Functor Tree where
   fmap _ EmptyTree = EmptyTree
   fmap f (Node l v r) = Node (fmap f l) (f v) (fmap f r)
 
+--6
+---a
+-- instance (Arbitrary a) => Arbitrary (Tree a) where
+--   arbitrary = do
+--     n <- choose (1,2) :: Gen Int
+--     case n of
+--       1 -> return EmptyTree
+--       2 -> do
+--         l <- arbitrary
+--         r <- arbitrary
+--         v <- arbitrary
+--         return $ Node l v r
+
+---b
+
+---c
+-- instance (Arbitrary a) => Arbitrary (Tree a) where
+--   arbitrary = do
+--     s <- arbitrary
+--     return $ makeTree s
+
+---d
+----sized :: (Int -> Gen a) -> Gen a
 instance (Arbitrary a) => Arbitrary (Tree a) where
   arbitrary = do
-    n <- choose (1,2) :: Gen Int
-    case n of
-      1 -> return EmptyTree
-      2 -> do
-        l <- arbitrary
-        r <- arbitrary
-        v <- arbitrary
-        return $ Node l v r
+    s <- sized (oi)
+    return $ makeTree s
+
+oi :: Arbitrary a => Int -> Gen [a]
+oi x = do
+  n <- choose (0,x) :: Gen Int
+  vectorOf x arbitrary
+
+---e
+propFlat :: Tree Int -> Bool
+propFlat tree = (treesize tree) == (length $ flatten tree)
+
+quickFlat = quickCheck propFlat
+
+propInv :: Tree Int -> Bool
+propInv tree = (treesize tree) == (treesize $ invert tree)
+
+quickInv = quickCheck propInv
+
+propMake :: [Int] -> Bool
+propMake list = sameElems list (flatten $ makeTree list)
+
+sameElems :: [Int] -> [Int] -> Bool
+sameElems xs ys = and $ (map (elem' xs) (filter (elem' ys) xs))
+  where elem' zs z = elem z zs
+
+quickMake = quickCheck propMake
+
+allTree = do
+  print "propFlat"
+  quickFlat
+  print "propInv"
+  quickInv
+  print "propMake"
+  quickMake
