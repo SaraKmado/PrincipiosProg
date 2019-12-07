@@ -1,5 +1,6 @@
 import System.IO
 import Data.Maybe
+import Data.Char
 
 maxAttempts = 6 --variavel global. nice. Determina o maximo de tentativas que se pode ter
 --isto acabou por ter mais que o que o exercicio pedia. oh well
@@ -9,13 +10,14 @@ main = do
   print "Jogo da forca da Snoopy. "
   print "Primeiro Jogador, pense numa palavra:"
   hSetEcho stdin False
-  word <- getLine
+  tempWord <- getLine
   hSetEcho stdin True
-  case (length word) of
+  case (length tempWord) of
       0 -> print "Bela piada. Se nao queres jogar entao nao jogues fds"
       1 -> print "Isso nao e uma palavra seu espertinho"
       2 -> print "Queres mesmo ser fodido! Proxima vez tenta uma palavra maior"
       otherwise ->  do
+        let word = map toLower tempWord
         let currWord = replicate (length word) '-'
         print currWord
         print "Segundo Jogador, tente adivinhar:"
