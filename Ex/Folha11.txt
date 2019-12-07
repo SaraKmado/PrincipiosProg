@@ -1,0 +1,193 @@
+Atencao: ter escepticismo a ver qp nao percebo assim tanto disto
+
+1. com length e (!!)
+  a. last :: [a] -> a
+    Pre-condition xs /= []
+    last xs == xs !! (length xs - 1)
+
+  b. (++) :: [a] -> [a] -> [a]
+    length (xs ++ ys) == length xs + length ys
+
+  c. map ::  (a -> b)-> [a] -> [b]
+    length (f xs) == length xs
+
+  d. tail :: [a] -> [a]
+    Pre-condition xs /= []
+    length (tail xs) == length xs - 1
+    xs !! x == (tail xs) !! (x - 1)
+
+  e. take :: Int -> [a] -> [a]
+    Pre-condition x > 0
+    length (take x xs) == min (length xs) x
+      testar com:
+        let f x xs = x > 0 ==> length (take x xs) == min (length xs) x
+        quickCheck f
+
+  f. drop :: Int -> [a] -> [a]
+    Pre-condition x > 0
+    length (drop x xs) == if x > length xs then 0 else length xs - x
+      testar com:
+        let f x xs = x > 0 ==> length (drop x xs) == if x > length xs then 0 else length xs - x
+        quickCheck f
+
+  g. init :: [a] -> [a]
+    Pre-condition xs /= []
+    length (init xs) == length xs - 1
+    xs !! 0 == (init xs) !! 0 (Pre-condition length xs > 1)
+    xs !! n == (init xs) !! n (Pre-condition n < (length xs) - 1 && length xs > 1)
+
+  h. zip :: [a] -> [b] -> [(a,b)]
+    length (zip xs ys) == min (length xs) (length ys)
+
+  i. unzip :: [(a,b)] -> ([a],[b])
+
+2. filter :: (a -> Bool) -> [a] -> [a]
+  a. rel. filter com length
+    length xs >= length (filter f xs)
+
+  b. rel. 2 elementos da lista filtrada
+    Pre-condition elem x (filter f xs) && elem y (filter f xs)
+    f x == f y
+
+3. Demonstrar os resultados recorrendo a definicao
+  a. length [x] = 1
+    length [] = 0 -> definicao
+    length [x] = length (x:xs) = 1 + length [] = 1 + 0 = 1
+
+  b. [x] ++ xs = x:xs
+    [] ++ xs = xs -> definicao
+    [x] ++ xs = (x:[]) ++ xs = x : ([] ++ xs) = x : xs
+
+  c. reverse [x] = [x]
+    reverse (x:xs) = (reverse xs ++ [x]) -> definicao
+    reverse [] = [] -> definicao
+    reverse [x] = reverse (x:[]) = reverse [] ++ [x] = [x]
+
+4. Mostrar que ++ e
+  a. associativo
+
+    definicao:
+    (++) :: [a] -> [a] -> [a]
+    [] ++ ys = ys
+    (x:xs) ++ ys = x : xs ++ ys
+
+    (xs ++ ys) ++ zs = xs ++ (ys ++ zs)
+
+    Casos base:
+    (xs ++ ys) ++ [] = xs ++ ys = xs ++ (ys ++ [])
+    ([] ++ ys) ++ zs = ys ++ zs = [] ++ (yz ++ zs)
+    (xs ++ []) ++ zs = xs ++ zs = xs ++ ([] + zs)
+
+    (xs ++ ys) ++ zs = ((x:xs') ++ (y:ys')) ++ (z:zs') = magia
+
+  b. [] e elemento neutro
+    [] ++ [] = [] -> definicao
+    [] ++ ys = ys -> definicao
+    ys ++ [] = (y:ys') ++ [] = y : (ys' ++ []) = y:ys' = ys -> inducao
+
+5. Mostrar por inducao
+  a. length (reverse xs) = length xs
+
+    base
+    length (reverse []) = length []
+
+    left
+    length (reverse xs) = length (reverse xs' ++ [x]) = length (reverse xs') + length [x] = length xs' + 1
+
+    right
+    length xs = length (x:xs') = 1 + length xs'
+
+  b.
+    reverse (xs ++ ys) = reverse ys ++ reverse xs
+
+    base
+    reverse (xs ++ []) = reverse xs = [] ++ reverse xs = reverse [] ++ reverse xs
+    reverse ([] ++ xs) = reverse [] ++ reverse xs = [] ++ reverse xs = reverse xs
+
+    left
+    reverse (xs ++ ys) = reverse (x:xs' ++ ys) = reverse (x : (xs' ++ ys)) = reverse (xs' ++ ys) ++ [x] = reverse ys ++ reverse xs' + [x]
+
+    right
+    reverse ys ++ reverse xs = reverse ys ++ reverse (x:xs') = reverse ys ++ reverse xs' ++ [x]
+
+  c. concat (xss ++ yss) = concat xss ++ concat yss
+    definicao
+    concat' :: [[a]] -> [a]
+    concat' xs = foldr (++) [] xs
+
+    base
+    concat ([] ++ []) = []
+    concat [] ++ concat [] = [] ++ [] = []
+
+    concat (xss ++ []) = concat xss
+    concat xss ++ concat [] = concat xss ++ [] = concat xss
+
+    concat ([] ++ xss) = concat xss
+    concat [] ++ concat xss = [] ++ concat xss = concat xss
+
+    left
+    concat (xss ++ yss) = concat (xs:xss' ++ yss) = xs : concat (xss' ++ yss)
+
+    right
+    concat xss ++ concat yss = concat (xs : xss) ++ concat yss = xs : concat xss ++ concat yss = xs : concat (xss ++ yss)
+
+  d. sum (xs ++ ys) = sum xs + sum ys
+    definicao
+    sum :: Num a => [a] -> a
+    sum xs = foldl (+) 0 xs
+
+    base
+    sum [] = 0
+    sum ([] ++ xs) = sum xs = 0 + sum xs = sum [] + sum xs
+    sum (xs ++ []) = sum xs = sum xs + 0 = sum xs + sum []
+
+    left
+    sum (xs ++ ys) = sum (x:xs' ++ ys) = 1 + sum (xs' ++ ys) = 1 + sum xs' + sum ys
+
+    right
+    sum xs + sum ys = sum (x:xs') + sum ys = 1 + sum xs' + sum ys
+
+  e. sum (reverse xs) = sum xs
+    base
+    sum (reverse []) = sum []
+
+    left
+    sum (reverse xs) = sum (reverse xs' ++ [x]) = sum (reverse xs') + sum [x] = sum (reverse xs') + 1 = sum xs' + 1
+
+    right
+    sum xs = sum (x:xs') = 1 + sum xs'
+
+6. para listas finitas : zip (fst (unzip ps)) (snd (unzip ps)) = ps
+este particularmente deve estar muito mal
+
+  definicoes:
+  zip :: [a] -> [b] -> [(a,b)]
+  zip xs ys = zipWith pair xs ys
+      where pair x y = (x, y)
+
+  zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+  zipWith z (a:as) (b:bs) = z a b : zipWith z as bs
+  zipWith _ _ _ = []
+
+  unzip :: [(a,b)] -> ([a],[b])
+  unzip xs =  foldr (\(a,b) (as,bs) -> (a:as,b:bs)) ([],[]) xs
+
+  base
+  ps = []
+
+  unzip ps = ([],[])
+  fst $ unzip ps = []
+  snd $ unzip ps = []
+  zip (fst $ unzip ps) (snd $ unzip ps) = []
+
+  por passos:
+    ps = [(x,y),(x',y')..(xx,yy)]
+      unzip ps = ([x..xx],[y..yy])
+      fst $ unzip ps = [x..xx]
+      snd $ unzip ps = [y..yy]
+      zip (fst $ unzip ps) (snd $ unzip ps) = zip [x..xx] [y..yy] = [(x,y)..(xx,yy)]
+
+7. Principio da extensionalidade: mostrar que . e associativo e que id e o seu elemento neutro
+  principio da extensionalidade: “Two functions are equal if they have the same value at every argument.”
+
+  i give up
