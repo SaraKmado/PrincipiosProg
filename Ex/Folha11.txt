@@ -1,4 +1,4 @@
-Atencao: ter escepticismo a ver qp nao percebo assim tanto disto
+Atencao: ter escepticismo a ver pq nao percebo assim tanto disto
 
 1. com length e (!!)
   a. last :: [a] -> a
