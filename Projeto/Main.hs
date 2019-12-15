@@ -1,7 +1,7 @@
-module Main (
-main
+module Main
+(main
 ) where
-
+--run: runhaskell Main BairrosAntigosLisboa.csv LisboaPOI.csv Lisboa.json
 import System.Environment
 import Data.List.Split
 import Funcoes
@@ -9,13 +9,17 @@ import Funcoes
 main = do
   [gps,pontosInteresse,output] <- getArgs
   gpsContents <- readFile gps
+  poiContents <- readFile pontosInteresse
   let gpsLines  = lines gpsContents
-  let gpsLista = init(divide "," $ gpsLines)
-  let tempoPassado = calculaTempo (last (head gpsLista)) (last (last gpsLista))
-  let ganhoAcumulado = ganhoAcc (gpsLines) 0
-  let ganhoAcumuladoM = ganhoAccM (gpsLines)
-  putStrLn (show ganhoAcumuladoM ++ " metros/metros")
-  let categor = categoria $ gpsLines
-  writeFile output (show ("\"Categoria\": " ++ [categor] ++ "\n"++"\""++"Tempo total (m)\": "
-    ++ (show tempoPassado) ++ "\n" ++ "\"Ganho acumulado\": " ++ (show ganhoAcumulado) ++ "\n"
-    ++ "\"Ganho acumulado por m: \"" ++ (show ganhoAcumuladoM) ++ "\n"))
+      gpsLista = init(divide "," gpsLines) -- o init apaga a linha vazia no final do ficheiro
+      tempoPassado = calculaTempo (last (head gpsLista)) (last (last gpsLista))
+      ganhoAcumulado = ganhoAcc (gpsLines)
+      ganhoAcumuladoM = ganhoAccM (gpsLines)
+      categor = categoria $ gpsLines
+      poiLista = init(divide "," $ lines poiContents)
+      allPontos = obterPontos gpsLista poiLista --TODO: esta desordenado
+  writeFile output (show "Categoria" ++ ": " ++ "\"" ++ [categor] ++ "\"" ++ ",\n")
+  appendFile output (show "Tempo total (m)" ++ ": " ++ show tempoPassado ++ ",\n")
+  appendFile output (show "Ganho acumulado" ++ ": " ++ show ganhoAcumulado ++ ",\n")
+  appendFile output (show "Ganho acumulado por m" ++ ": " ++ show ganhoAcumuladoM ++ ",\n")
+  appendFile output (show "Pontos de Interesse" ++ ": " ++ allPontos)
