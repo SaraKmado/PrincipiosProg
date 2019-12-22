@@ -52,7 +52,7 @@ public class Streams {
 		User u4 = new User (15,"BOYSSSSSSSS",Sex.MALE);
 		List<User> utilizadores = Arrays.asList(u1,u2,u3,u4);
 		
-		List<User> maisque10masc = utilizadores.stream().filter(user->user.getAge() >= 10).filter(user -> user.getSex() == Sex.MALE).collect(Collectors.toList());
+		List<User> maisque10masc = utilizadores.stream().filter(user -> user.getAge() >= 10).filter(user -> user.getSex() == Sex.MALE).collect(Collectors.toList());
 		for (User user2 : maisque10masc) {
 			System.out.println(user2);
 		}
