@@ -36,6 +36,18 @@ public class Ex {
 		System.out.println("Ex 6");
 		System.out.println("  See class Ex6");
 		System.out.println();
+		
+		System.out.println("Ex 7");
+		System.out.println("  See class Ex7");
+		System.out.println();
+		
+		System.out.println("Ex 8");
+		System.out.println("  See class Ex8");
+		System.out.println();
+		
+		System.out.println("Ex 9");
+		System.out.println("  See class Ex9");
+		System.out.println();
 	}
 
 }
