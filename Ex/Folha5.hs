@@ -7,8 +7,8 @@
 ---f adiciona um paragrafo a uma String
 
 --2
-----a funçao a e igual a b mas a a recebe um tuplo e a b recebe 2 nums
-----a funçao de c retorna uma funçao soma
+----a funçao a. e igual a b. mas a a. recebe um tuplo e a b. recebe 2 nums
+----a funçao c. retorna uma funçao que recebe um numero e soma o ao argumento de c.
 
 --3
 ---a [2,3,4]
@@ -22,12 +22,12 @@
 ---i [1,4,9]
 
 --4
-zipWith1 :: (a->b->c)-> [a] -> [b] -> [c]
+zipWith1 :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith1 f xs [] = []
 zipWith1 f [] ys = []
 zipWith1 f (x:xs) (y:ys) = f x y : zipWith1 f xs ys
 
-zipWith2 :: (a->b->c)-> [a] -> [b] -> [c]
+zipWith2 :: (a -> b -> c) -> [a] -> [b] -> [c]
 zipWith2 f xs ys = [f (xs !! x) (ys !! y) | x <- [0..length xs - 1],y <- [0..length ys - 1], x == y]
 
 zip' :: [a] -> [b] -> [(a,b)]
@@ -54,7 +54,6 @@ total1 :: (Int -> Int)-> Int -> Int
 total1 f 0 = f 0
 total1 f x = f x + total1 f (x-1)
 
-
 total2 :: (Int -> Int)-> Int -> Int
 total2 f x = sum [f y | y <- [0..x]]
 
@@ -74,22 +73,22 @@ aplica3 fs xs = foldl (\acc f -> map f acc) xs fs
 
 --10
 ---a Num a => a -> a
----b 7
+---b Num a => a
 ---c (Ord a, Num a) => a -> Bool
 ---d Num a => a -> a -> a
----e Error
----f 10
+---e Num a => a -> a
+---f Num a => a
 ---g Num a => a -> a -> a
 ---h (a -> a) -> a -> a
----i devolve Num
+---i Num a => a -> a
 
 --11
-----(\a b c -> a*b*c)1 2
+mult = (\a b c -> a * b * c)
 
 --12
----- (++) (\xs ys -> concat [xs,ys])
----- (++[1,2]) (\xs -> concat [xs,[1,2]])
----- ([1,2]++) (\xs -> concat [[1,2],xs])
+----(++) (\xs ys -> concat [xs,ys]) [a] -> [a] -> [a]
+----(++[1,2]) (\xs -> concat [xs,[1,2]]) Num a => [a] -> [a]
+----([1,2]++) (\xs -> concat [[1,2],xs]) Num a => [a] -> [a]
 
 --13
 isNonBlank :: Char -> Bool
@@ -97,7 +96,7 @@ isNonBlank = \c -> elem c [' ','\n','\t']
 
 --14
 inv :: (a -> b -> c)-> b -> a -> c
-inv f x y = f y x
+inv = \f x y -> f y x
 
 --15
 curry' :: ((a, b)-> c)-> a -> b ->c
@@ -109,11 +108,11 @@ uncurry' f (x,y) = g (x,y)
   where g (x,y) = f x y
 
 --16
----a 30
----b
----c
----d
----e
+---a 30, (Num a, Enum a) => a
+---b 6, (Ord a, Num a) => a
+---c 54, (Num a, Enum a) => a
+---d -6, (Num b, Enum b) => b
+---e "zzzzz", [Char]
 
 --17
 sum' :: Num a => [a] -> a
@@ -146,7 +145,7 @@ poly z xs =
 
 --22
 selectApply :: (a -> b) -> (a -> Bool) -> [a] -> [b]
-selectApply f g xs = [f x | x <- xs, g x]
+selectApply f g xs = map f $ filter g xs
 
 --23
 histograma :: Eq a => [a] -> [(a,Int)]
@@ -162,6 +161,9 @@ addOne [] _ = []
 addOne ((x1,x2):xs) i = if i == 0 then (x1,x2 + 1) : xs else (x1,x2) : addOne xs (i-1)
 
 --24
+-- [a -> b] -> [[a] -> [b]]
+-- (a -> b) -> [[a]] -> [[b]]
+
 gz :: [[Int]] -> [[Bool]]
 gz xs = (map . map) (>0) xs
 
@@ -175,8 +177,8 @@ iter2 f n = foldr (\x acc -> f . acc) f [2..n]
 
 --26
 ----Creates list like [[a], [], [], [b]] and concatenates it
-filter' :: (a -> Bool) -> [a] -> [a]
-filter' p = concat . map box
+filter'' :: (a -> Bool) -> [a] -> [a]
+filter'' p = concat . map box
   where box x = if p x then [x] else []
 
 --27

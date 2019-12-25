@@ -6,8 +6,7 @@ sum' (x:xs) = x + sum' xs
 
 ---b
 replicate' :: Int -> a -> [a]
-replicate' 0 a = []
-replicate' n a = a : (replicate' (n-1) a)
+replicate' n a = if n > 0 then a : (replicate' (n-1) a) else []
 
 ---c
 maximo :: Ord a => [a] -> a
@@ -24,12 +23,14 @@ elem' a (x:xs) = if a == x then True else elem' a xs
 ---e
 substitui :: Eq a => a -> a -> [a] -> [a]
 substitui _ _ [] = []
-substitui a b (x:xs) = if x == a then b:substitui a b xs else x:substitui a b xs
+substitui a b (x:xs) = c : substitui a b xs
+  where c = if x == a then b else x
 
 ---f
 altera :: Ord a => [a] -> a -> a -> [a]
 altera [] a b = []
-altera (x:xs) a b = if x < a then b : altera xs a b else x : altera xs a b
+altera (x:xs) a b = c : altera xs a b
+  where c = if x < a then b else x
 
 ---g
 multiplos :: [Int] -> Int -> [Int]
@@ -49,9 +50,11 @@ potencias b (x:xs) = b^x : potencias b xs
 
 ---j
 posicoes :: [Int] -> Int -> [Int]
-posicoes xs y = posicoesAxu xs y 0
-posicoesAxu [] _ _ = []
-posicoesAxu (x:xs) y n = if mod x y == 0 then n : posicoesAxu xs y (n+1) else posicoesAxu xs y (n+1)
+posicoes xs y = posicoesAux xs y 0
+
+posicoesAux :: [Int] -> Int -> Int -> [Int]
+posicoesAux [] _ _ = []
+posicoesAux (x:xs) y n = if mod x y == 0 then n : posicoesAux xs y (n+1) else posicoesAux xs y (n+1)
 
 ---k
 frase :: Int -> [(Int,String)] -> String
@@ -67,11 +70,13 @@ trocaPares (a:b:xs) = b:a:trocaPares xs
 ---m
 fusao :: (Ord a, Num b) => [(a,b)] -> [(a,b)] -> [(a,b)]
 fusao [] [] = []
-fusao [] (x:xs) = x:fusao [] xs
-fusao (x:xs) [] = x:fusao xs []
-fusao (x:xs) (y:ys) = if fst x > fst y then y : fusao (x:xs) ys
-else if fst x < fst y then x : fusao xs (y:ys)
-else (fst x,snd x + snd y): fusao xs ys
+fusao [] xs = xs
+fusao xs [] = xs
+fusao (x:xs) (y:ys) = if fst x > fst y
+  then y : fusao (x:xs) ys
+  else if fst x < fst y
+    then x : fusao xs (y:ys)
+    else (fst x,snd x + snd y): fusao xs ys
 
 --2
 repBinaria :: Int -> String
@@ -83,12 +88,12 @@ odioso x = mod (odiosoAux x 0) 2 == 1
 
 odiosoAux :: Int -> Int -> Int
 odiosoAux x cont = if x < 2
-then if mod x 2 == 0
-then 0
-else 1
-else if mod x 2 == 0
-then odiosoAux (div x 2) cont
-else odiosoAux (div x 2) cont+1
+  then if mod x 2 == 0
+    then 0
+    else 1
+  else if mod x 2 == 0
+    then odiosoAux (div x 2) cont
+    else odiosoAux (div x 2) cont + 1
 
 --4
 basex :: Integer -> Integer -> String

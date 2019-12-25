@@ -42,3 +42,6 @@ f6 x y z = x + y > z
 
 --7
 ---a T, b T, c F, d T, e F, f T, g F
+
+--8
+--- a a, b (b,a), c (a,b), d Num a => a, e Bool, f a

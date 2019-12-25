@@ -1,4 +1,5 @@
 --1
+{-# Language InstanceSigs #-}
 data Point = Point (Float,Float) -- (x,y)
 data Shape = Circle Point Float | Rectangle Point Point | Triangle Point Point Point
 -- Cirlce as Center(x,y) radius, Rectangle as (x1,y1) (x2,y2), Triangle as its 3 points
@@ -24,7 +25,7 @@ dist2 (Point (x1,y1)) (Point (x2,y2)) = sqrt $ (x1 - x2)^2 + (y1 - y2)^2
 data Nat = Zero | Succ Nat deriving (Show, Eq)
 
 add :: Nat -> Nat -> Nat
-add x (Zero) = x
+add x Zero = x
 add Zero y = y
 add (Succ x) y = add x (Succ y)
 
@@ -65,20 +66,16 @@ remnat :: Nat -> Nat -> Nat
 remnat Zero x = Zero
 remnat x Zero = error "Undefined"
 remnat x (Succ Zero) = x
-remnat x y = if x == y
-  then Zero
-  else if minus x y == Zero
-    then x
-    else remnat (minus x y) y
+remnat x y = if minus x y == Zero
+  then x
+  else remnat (minus x y) y
 
 quotnat :: Nat -> Nat -> Nat
 quotnat x Zero = error "Undefined"
 quotnat Zero x = Zero
-quotnat x y = if x == y
-  then Succ Zero
-  else if lessThan x y
-     then Zero
-     else Succ (quotnat (sub x y) y)
+quotnat x y = if lessThan x y
+  then Zero
+  else Succ (quotnat (sub x y) y)
 
 lessThan :: Nat -> Nat -> Bool
 lessThan Zero Zero = False
@@ -165,7 +162,7 @@ partition f xs = (ys,difference xs ys)
 
 --4
 infixr 5 :+
-data Map k a = Emptym | (k,a) :+ (Map k a) deriving (Show)
+data Map k a = Emptym | (k,a) :+ (Map k a)
 
 emptym :: Map k a
 emptym = Emptym
@@ -271,7 +268,7 @@ allIn t1 t2 = foldl(\acc x -> if elem x ts2 then acc else False) True ts1
         ts2 = flatten t2
 
 --6
-
+----No.
 
 --7
 instance (Eq a) => Eq (Tree a) where
@@ -282,8 +279,8 @@ instance (Show a) => Show (Tree a) where
   show t = show' t 0
 
 show' :: (Show a)  => Tree a -> Int -> String
-show' EmptyTree n = (replicate n '|') ++ "Empty" ++ "\n"
-show' (Node l v r) n = (replicate n '|') ++ show v ++ "\n" ++ (show' l (n+1)) ++ (show' r (n+1))
+show' EmptyTree n = (replicate n ' ') ++ "Empty" ++ "\n"
+show' (Node l v r) n = (replicate n ' ') ++ show v ++ "\n" ++ (show' l (n+1)) ++ (show' r (n+1))
 
 --9
 instance Functor Tree where
@@ -307,11 +304,25 @@ show'' (x:-:Empty) True = (show x) ++ "}"
 show'' (x:-:xs) True = (show x) ++ "," ++ show'' xs True
 
 --11
-----Nao consegui
+instance Functor Set where
+  fmap :: (Ord a, Ord b) =>  (a -> b) -> Set a -> Set b
+  fmap _ Empty = Empty
+  fmap f (x :-: Empty) = singleton (f x)
+  fmap f (x :-: xs) = insert (f x) (fmap f xs)
 
 --12
-
+instance (Eq k, Eq a) => Eq (Map k a) where
+  Emptym == Emptym = True
+  Emptym == xs = False
+  xs == Emptym = False
+  xs == ys = length x == length y && and [x !! z == y !! z | z <- [1..length x]]
+    where x = toListm xs
+          y = toListm ys
 --13
+instance (Show k, Show a) => Show (Map k a) where
+  show Emptym = "{}"
+  show (m :+ xm) = (foldl (\acc x -> acc ++", " ++(show $ fst x) ++ ": " ++ (show $ snd x)) ("{" ++ (show $ fst m) ++ ": " ++ (show $ snd m)) xs) ++ "}"
+    where xs = toListm xm
 
 --14
 class Visible a where
@@ -332,11 +343,11 @@ instance (Visible a) => Visible [a] where
   toString [] = ""
   toString [x] = toString x
   toString (x:xs) = (toString x) ++ ", " ++ toString xs
-  dimension xs = length xs
+  dimension xs = dimension xs * length xs
 
 instance (Visible a, Visible b) => Visible (a,b) where
   toString (a,b) = "(" ++ (toString a) ++ "," ++ (toString b) ++")"
-  dimension (a,b) = dimension a + dimension b
+  dimension (a,b) = 2
 
 --15
 --instance (Ord a,Ord b) => Ord (a,b) where
