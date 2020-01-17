@@ -1,4 +1,4 @@
-import Test.QuickCheck --if error then comment this line out, as well as every line after  test of last function
+import Test.QuickCheck --if error then comment this line out, as well as every line after test of last function
 
 --1
 soma1 :: Int -> Int -> Int -> Int
