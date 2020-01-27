@@ -172,7 +172,7 @@ inverse xs |allNull xs = [[]]
            |otherwise = map (head) xs : inverse (map tail xs)
 
 allNull :: [[a]] -> Bool
-allNull xs = foldl (\acc x -> if (null x) then True else False) False xs
+allNull xs = foldl (\acc x -> if (null x) then True else acc) False xs
 
 matMult' :: [[Int]] -> [[Int]] -> [[Int]]
 matMult' [] [] = []
