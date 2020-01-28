@@ -1,3 +1,68 @@
+--grupo 1
+--a
+primeiroUltimo :: [a] -> a
+primeiroUltimo (x:xs) = if even (length (x:xs))
+  then x
+  else ultimo xs
+
+--b
+ultimo :: [a] -> a
+ultimo [x] = x
+ultimo (x:xs) = ultimo xs
+
+--c
+minmax :: Ord a => [a] -> (a,a)
+minmax xs = (minimo xs,maximo xs)
+
+minimo :: Ord a => [a] -> a
+minimo [x] = x
+minimo (x:xs) = if x > mini then mini else x
+  where mini = minimo xs
+
+maximo :: Ord a => [a] -> a
+maximo [x] = x
+maximo (x:xs) = if x < maxi then maxi else x
+  where maxi = maximo xs
+
+--d
+minmax' :: Ord a => [a] -> (a,a)
+minmax' (x:xs) = foldl (\(mini,maxi) y -> (if y < mini then y else mini, if y > maxi then y else maxi)) (x,x) xs
+
+--grupo 2
+--Um Metro (comboio) é caracterizado pelo número de carruagens
+data Metro = Metro Int deriving Show
+--Uma linha de metro é representada por uma String
+type Linha = String
+--A Alocação descreve que metros estão atribuídos a que linhas e que metros estão livres
+data Alocacao = Alocacao [(Metro,Linha)] [Metro] deriving Show
+
+umaAloc = Alocacao [(Metro 6, "Amarela")] [Metro 3, Metro 5]
+
+--a
+existeMetroLivre :: Int -> Alocacao -> Bool
+existeMetroLivre x (Alocacao _ livres) = foldl (\acc (Metro y) -> if y > x then True else acc) False livres
+
+--b
+alocaMetro :: Int -> Linha -> Alocacao -> Alocacao
+alocaMetro n linha (Alocacao os ls) = Alocacao ((Metro size,linha) : os) (remover size ls)
+  where size = findSize n ls
+
+findSize :: Int -> [Metro] -> Int
+findSize s ((Metro x) : xs) = if s < x then x else findSize s xs
+
+remover :: Int -> [Metro] -> [Metro]
+remover s ((Metro x) : xs) = if s == x then xs else (Metro x):remover s xs
+
+--c
+instance Eq Alocacao where
+  (Alocacao xs ys) == (Alocacao as bs) = (contaLivre ys + contaBusy xs) == (contaLivre bs + contaBusy as)
+
+contaLivre :: [Metro] -> Int
+contaLivre xs = foldl (\acc (Metro x) -> acc + x) 0 xs
+
+contaBusy :: [(Metro,String)] -> Int
+contaBusy xs = foldl (\acc (Metro x,string) -> acc + x) 0 xs
+
 --grupo 4
 intercalar :: a -> [a] -> [a]
 intercalar _ [] = [] --i1
