@@ -1,3 +1,5 @@
+import Test.QuickCheck
+
 --grupo 1
 --a
 primeiroUltimo :: [a] -> a
@@ -62,6 +64,40 @@ contaLivre xs = foldl (\acc (Metro x) -> acc + x) 0 xs
 
 contaBusy :: [(Metro,String)] -> Int
 contaBusy xs = foldl (\acc (Metro x,string) -> acc + x) 0 xs
+
+--grupo 3
+
+instance Arbitrary Alocacao where
+  arbitrary = do
+    numLivre <- arbitrary
+    numOcupado <- arbitrary
+    let livres = makeLivres numLivre
+    let ocupados = makeOcupados numOcupado
+    return $ Alocacao ocupados livres
+
+makeLivres :: Int -> [Metro]
+makeLivres 0 = []
+makeLivres n = do
+  x <- arbitrary
+  return $ x : makeLivres (n-1)
+
+makeOcupados :: Int -> [(Metro,String)]
+makeOcupados 0 = []
+makeOcupados n = do
+  x <- arbitrary
+  s <- arbitrary
+  return $ (x, s) : makeOcupados (n-1)
+
+instance Arbitrary Metro where
+  arbitrary = do
+     x <- arbitrary
+     return $ Metro x
+
+-- prop_livre_vazio :: Alocacao -> Property
+-- prop_livre_vazio (Alocacao xs ys) = existeMetroLivre (Alocacao xs ys) ==> not $ null ys
+--
+-- prop_alocar_numero :: Alocacao -> Property
+-- prop_alocar_numero al x =>
 
 --grupo 4
 intercalar :: a -> [a] -> [a]
