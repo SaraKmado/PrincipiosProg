@@ -67,6 +67,7 @@ contaBusy xs = foldl (\acc (Metro x,string) -> acc + x) 0 xs
 
 --grupo 3
 
+//not working
 instance Arbitrary Alocacao where
   arbitrary = do
     numLivre <- arbitrary
